@@ -120,15 +120,17 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
     }
 
     private fun setAccountVisibility(call: MethodCall, result: Result) {
-        val accountName = call.argument<String>(ACCOUNT_NAME)
-        val accountType = call.argument<String>(ACCOUNT_TYPE)
-        val setVisibility = call.argument<String>(SET_VISIBILITY)
-        val setVisibilityPackage = call.argument<String>(SET_VISIBILITY_PACKAGE)
-
-        val accountManager = AccountManager.get(it)
-        val account = Account(accountName, accountType)
-        val resultSetVisibility = accountManager.setAccountVisibility(account, setVisibilityPackage, setVisibility)
-        result.success(resultSetVisibility)
+        activity?.let {
+            val accountName = call.argument<String>(ACCOUNT_NAME)
+            val accountType = call.argument<String>(ACCOUNT_TYPE)
+            val setVisibility = call.argument<String>(SET_VISIBILITY)
+            val setVisibilityPackage = call.argument<String>(SET_VISIBILITY_PACKAGE)
+    
+            val accountManager = AccountManager.get(it)
+            val account = Account(accountName, accountType)
+            val resultSetVisibility = accountManager.setAccountVisibility(account, setVisibilityPackage, setVisibility)
+            result.success(resultSetVisibility)
+        }
     }
 
 //    private fun peekAccounts(result: Result) {
