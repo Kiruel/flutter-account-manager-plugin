@@ -41,6 +41,33 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
         }
     }
 
+    private fun getUserData(call: MethodCall, result: Result) {
+        activity?.let {
+            val accountName = call.argument<String>(ACCOUNT_NAME)
+            val accountType = call.argument<String>(ACCOUNT_TYPE)
+            val userDataKey = call.argument<String>(USER_DATA_KEY)
+
+            val accountManager = AccountManager.get(it)
+            val account = Account(accountName, accountType)
+            val userData = accountManager.getUserData(account, userDataKey)
+            result.success(userData)
+        }
+    }
+
+    private fun setUserData(call: MethodCall, result: Result) {
+        activity?.let {
+            val accountName = call.argument<String>(ACCOUNT_NAME)
+            val accountType = call.argument<String>(ACCOUNT_TYPE)
+            val userDataKey = call.argument<String>(USER_DATA_KEY)
+            val userData = call.argument<String>(USER_DATA)
+
+            val accountManager = AccountManager.get(it)
+            val account = Account(accountName, accountType)
+            accountManager.setUserData(account, userDataKey, userData)
+            result.success(true)
+        }
+    }
+
     private fun setAccessToken(call: MethodCall, result: Result) {
         activity?.let {
             val accountName = call.argument<String>(ACCOUNT_NAME)
@@ -112,15 +139,8 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
             val accountType = call.argument<String>(ACCOUNT_TYPE)
             val accountManager = AccountManager.get(activity)
             val account = Account(accountName, accountType)
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-                accountManager.removeAccount(account, null, null)
-                // TODO: Need to wait for result from AccountManager.removeAccount()
-                result.success(true)
-            } else {
-                val wasRemoved = accountManager.removeAccountExplicitly(account)
-                result.success(wasRemoved)
-            }
+            val wasRemoved = accountManager.removeAccountExplicitly(account)
+            result.success(wasRemoved)
         } else {
             result.success(false)
         }
@@ -129,6 +149,8 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "addAccount" -> addAccount(call, result)
+            "getUserData" -> getUserData(call, result)
+            "setUserData" -> setUserData(call, result)
             "getAccounts" -> getAccounts(result)
             "getAccessToken" -> getAccessToken(call, result)
             "removeAccount" -> removeAccount(call, result)
@@ -186,6 +208,8 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
         private const val ACCOUNT_TYPE = "account_type"
         private const val AUTH_TOKEN_TYPE = "auth_token_type"
         private const val ACCESS_TOKEN = "access_token"
+        private const val USER_DATA_KEY = "user_data_key"
+        private const val USER_DATA = "user_data"
 
         @Suppress("UNUSED")
         @JvmStatic
