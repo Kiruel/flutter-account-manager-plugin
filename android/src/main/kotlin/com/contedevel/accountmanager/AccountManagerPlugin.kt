@@ -123,7 +123,7 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
         activity?.let {
             val accountName = call.argument<String>(ACCOUNT_NAME)
             val accountType = call.argument<String>(ACCOUNT_TYPE)
-            val setVisibility = call.argument<String>(SET_VISIBILITY)
+            val setVisibility = call.argument<Int>(SET_VISIBILITY)
             val setVisibilityPackage = call.argument<String>(SET_VISIBILITY_PACKAGE)
     
             val accountManager = AccountManager.get(it)
