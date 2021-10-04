@@ -119,6 +119,18 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
         }
     }
 
+    private fun setAccountVisibility(call: MethodCall, result: Result) {
+        val accountName = call.argument<String>(ACCOUNT_NAME)
+        val accountType = call.argument<String>(ACCOUNT_TYPE)
+        val setVisibility = call.argument<String>(SET_VISIBILITY)
+        val setVisibilityPackage = call.argument<String>(SET_VISIBILITY_PACKAGE)
+
+        val accountManager = AccountManager.get(it)
+        val account = Account(accountName, accountType)
+        val resultSetVisibility = accountManager.setAccountVisibility(account, setVisibilityPackage, setVisibility)
+        result.success(resultSetVisibility)
+    }
+
 //    private fun peekAccounts(result: Result) {
 //        if (activity != null) {
 //            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -155,6 +167,7 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
             "getAccessToken" -> getAccessToken(call, result)
             "removeAccount" -> removeAccount(call, result)
             "setAccessToken" -> setAccessToken(call, result)
+            "setAccountVisibility" -> setAccountVisibility(call, result)
             else -> result.notImplemented()
         }
     }
@@ -210,6 +223,8 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
         private const val ACCESS_TOKEN = "access_token"
         private const val USER_DATA_KEY = "user_data_key"
         private const val USER_DATA = "user_data"
+        private const val SET_VISIBILITY = "set_visibility"
+        private const val SET_VISIBILITY_PACKAGE = "set_visibility_package"
 
         @Suppress("UNUSED")
         @JvmStatic

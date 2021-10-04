@@ -22,6 +22,14 @@ class AccessToken {
   });
 }
 
+enum Visibility {
+  VISIBILITY_NOT_VISIBLE,
+  VISIBILITY_UNDEFINED,
+  VISIBILITY_USER_MANAGED_NOT_VISIBLE,
+  VISIBILITY_USER_MANAGED_VISIBLE,
+  VISIBILITY_VISIBLE,
+}
+
 /// Represents some APIs from Android account manager and emulates it on iOS
 /// platform
 class AccountManager {
@@ -33,6 +41,8 @@ class AccountManager {
   static const String _KeyAccessToken = 'access_token';
   static const String _KeyUserDataKey = "user_data_key";
   static const String _KeyUserData = "user_data";
+  static const String _KeySetVisibility = "account_visibility";
+  static const String _KeySetVisibilityPackage = "account_visibility_package";
 
   /// Adds the [account] to the account manager on Android and user preferences
   /// on iOS
@@ -82,6 +92,15 @@ class AccountManager {
       );
     }
     return accessToken;
+  }
+
+  static Future<bool> setAccountVisibility(Account account, String packageName, int visibility) async {
+    return await _channel.invokeMethod('setAccountVisibility', {
+      _KeyAccountName: account.name,
+      _KeyAccountType: account.accountType,
+      _KeySetVisibilityPackage: packageName,
+      _KeySetVisibility: visibility,
+    });
   }
 
   /// Returns a list of accounts
