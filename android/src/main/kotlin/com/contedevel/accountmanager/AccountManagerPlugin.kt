@@ -123,12 +123,15 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
         activity?.let {
             val accountName = call.argument<String>(ACCOUNT_NAME)
             val accountType = call.argument<String>(ACCOUNT_TYPE)
-            val setVisibility = call.argument<Int>(SET_VISIBILITY)
+            val setVisibility: Int? = call.argument<Int>(SET_VISIBILITY)
             val setVisibilityPackage = call.argument<String>(SET_VISIBILITY_PACKAGE)
     
             val accountManager = AccountManager.get(it)
             val account = Account(accountName, accountType)
-            val resultSetVisibility = accountManager.setAccountVisibility(account, setVisibilityPackage, setVisibility)
+            var resultSetVisibility = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                resultSetVisibility = setVisibility?.let { it1 -> accountManager.setAccountVisibility(account, setVisibilityPackage, it1) } == false
+            }
             result.success(resultSetVisibility)
         }
     }
@@ -153,7 +156,12 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
             val accountType = call.argument<String>(ACCOUNT_TYPE)
             val accountManager = AccountManager.get(activity)
             val account = Account(accountName, accountType)
-            val wasRemoved = accountManager.removeAccountExplicitly(account)
+            var wasRemoved = false;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+                accountManager.removeAccount(account, null, null)
+            } else {
+                wasRemoved = accountManager.removeAccountExplicitly(account)
+            }
             result.success(wasRemoved)
         } else {
             result.success(false)
