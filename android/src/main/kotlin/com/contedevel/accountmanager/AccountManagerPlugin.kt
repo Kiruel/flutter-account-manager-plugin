@@ -130,7 +130,7 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
             val account = Account(accountName, accountType)
             var resultSetVisibility = false
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                resultSetVisibility = setVisibility?.let { it1 -> accountManager.setAccountVisibility(account, setVisibilityPackage, it1) } == false
+                resultSetVisibility = setVisibility?.let { it1 -> accountManager.setAccountVisibility(account, setVisibilityPackage, it1) } == true
             }
             result.success(resultSetVisibility)
         }
