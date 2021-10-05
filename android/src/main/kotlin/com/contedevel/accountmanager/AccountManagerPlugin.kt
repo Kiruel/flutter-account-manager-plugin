@@ -225,8 +225,8 @@ class AccountManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Pl
         private const val ACCESS_TOKEN = "access_token"
         private const val USER_DATA_KEY = "user_data_key"
         private const val USER_DATA = "user_data"
-        private const val SET_VISIBILITY = "set_visibility"
-        private const val SET_VISIBILITY_PACKAGE = "set_visibility_package"
+        private const val SET_VISIBILITY = "account_visibility"
+        private const val SET_VISIBILITY_PACKAGE = "account_visibility_package"
 
         @Suppress("UNUSED")
         @JvmStatic
